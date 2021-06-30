@@ -21,6 +21,10 @@ stepHandler.action("delete", async (ctx) => {
   await ctx.reply("What is number of the query you want to delete?");
   return ctx.wizard.next();
 });
+stepHandler.action("cancel", async (ctx) => {
+  await ctx.reply("Okay, next time then!");
+  return ctx.scene.leave();
+});
 
 export const createEditParsersWizard = (scheduler: Scheduler, bot: Telegraf) =>
   new Scenes.WizardScene<MyContext>(

@@ -1,4 +1,5 @@
 import { Tori } from "../parsers/tori";
+import { logger } from "./log";
 import {
   Parser,
   IUserSetParserInfo,
@@ -31,6 +32,13 @@ export class Scheduler {
       id: maxId + 1,
     };
 
+    logger.info(
+      `New ${
+        EParserType[fullParserInfo.parserType]
+      } parser created with info: `,
+      fullParserInfo
+    );
+
     if (parserInfo.parserType === EParserType.Tori) {
       return new Tori(fullParserInfo);
     }
@@ -50,6 +58,7 @@ export class Scheduler {
       parser,
       intervalFunction,
     });
+    parser.fetchNewResults(onNewItemsFound);
   }
 
   public listParsers() {

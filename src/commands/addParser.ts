@@ -1,13 +1,15 @@
 import { Scheduler } from "../helpers/scheduler";
-import { Scenes, Telegraf, Context } from "telegraf";
+import { Scenes, Telegraf, Context, Composer, Markup } from "telegraf";
 import { EParserType } from "../helpers/parser";
 
+const ALLOWED_INTERVALS = ["5", "10", "15", "30", "60"];
 interface ToriWizard extends Scenes.WizardSessionData {
   ToriWizardSessionProp: number;
 }
 
 interface AddParserSession extends Scenes.WizardSession<ToriWizard> {
   name?: string;
+  parserType?: EParserType;
   url?: string;
 }
 
@@ -23,7 +25,24 @@ export const createAddParserWizard = (scheduler: Scheduler, bot: Telegraf) =>
     "add-parser",
     async (ctx) => {
       await ctx.reply(
-        "Hi!\nI'm Toribot!\nI'll help you to find the best items first from tori.fi. Let's setup your first tori query.\nWhat would be the name for the query?"
+        "Hi!\nI'm marketplace bot!\nI'll help you to find the best items first from the desired marketplace. Let's start the query setup. What type of a query you want to make?",
+        Markup.keyboard([Markup.button.callback(EParserType.Tori, "")])
+      );
+      return ctx.wizard.next();
+    },
+    async (ctx) => {
+      const message = ctx.message as any;
+
+      if (!message || !Object.values(EParserType).includes(message.text)) {
+        await ctx.reply("Invalid parser type, exiting..");
+        return ctx.scene.leave();
+      }
+
+      ctx.session.parserType = message.text;
+
+      await ctx.reply(
+        "What would be the name of the query?",
+        Markup.removeKeyboard()
       );
       return ctx.wizard.next();
     },
@@ -37,7 +56,7 @@ export const createAddParserWizard = (scheduler: Scheduler, bot: Telegraf) =>
 
       ctx.session.name = message.text;
       await ctx.reply(
-        "What would be the url of the tori.fi query you want me to keep you updated?"
+        "What would be the url of the query you want me to keep you updated?"
       );
       return ctx.wizard.next();
     },
@@ -50,13 +69,36 @@ export const createAddParserWizard = (scheduler: Scheduler, bot: Telegraf) =>
       }
 
       ctx.session.url = message.text;
+
+      await ctx.reply(
+        "Okay, what would be the interval of the query?",
+        Markup.keyboard(
+          ALLOWED_INTERVALS.map((interval) =>
+            Markup.button.callback(interval, interval)
+          )
+        )
+      );
+      return ctx.wizard.next();
+    },
+    async (ctx) => {
+      const message = ctx.message as any;
+
+      if (
+        !message ||
+        !ALLOWED_INTERVALS.includes(message.text) ||
+        !Number.isInteger(Number(message.text))
+      ) {
+        await ctx.reply("Invalid interval, exiting..");
+        return ctx.scene.leave();
+      }
+
       await ctx.reply("Thanks! I'll create the parser now...");
       scheduler.addParser(
         {
           name: ctx.session.name,
-          parserType: EParserType.Tori,
+          parserType: ctx.session.parserType,
           url: ctx.session.url,
-          intervalMinutes: 1,
+          intervalMinutes: message.text,
         },
         async ({ parser, items }) => {
           for (const item of items) {
@@ -68,7 +110,7 @@ export const createAddParserWizard = (scheduler: Scheduler, bot: Telegraf) =>
           }
         }
       );
-      await ctx.reply("Added!");
+      await ctx.reply("Added!", Markup.removeKeyboard());
       return ctx.scene.leave();
     }
   );

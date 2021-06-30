@@ -1,5 +1,6 @@
 import { IParseResult, OnNewItemsFound, Parser } from "../helpers/parser";
 import * as Xray from "x-ray";
+import { logger } from "../helpers/log";
 
 export class Tori extends Parser {
   async fetchNewResults(onNewItemsFound: OnNewItemsFound) {
@@ -44,6 +45,10 @@ export class Tori extends Parser {
       (p) => !this.previousParseResults.includes(p.id)
     );
     const newProductIds = newProducts.map((p) => p.id);
+
+    logger.info(
+      `[${this.info.parserType}]: ${this.info.name} queried with ${newProductIds.length} new products.`
+    );
 
     this.previousParseResults.push(...newProductIds);
 

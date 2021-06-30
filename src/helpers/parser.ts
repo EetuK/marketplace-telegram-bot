@@ -1,5 +1,3 @@
-import { logger } from "./log";
-
 export interface IParseResult {
   id: string | number;
   title: string;
@@ -9,7 +7,7 @@ export interface IParseResult {
 }
 
 export enum EParserType {
-  Tori = "tori",
+  Tori = "Tori.fi",
 }
 
 export type OnNewItemsFound = (params: {
@@ -39,7 +37,6 @@ export abstract class Parser {
 
   constructor(params: IParserInfo) {
     this.info = params;
-    logger.info("new parser created with info", this.info);
   }
 
   previousParseResults: previousParseResults = [];
