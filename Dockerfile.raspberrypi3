@@ -1,0 +1,16 @@
+FROM balenalib/raspberry-pi-debian-node:latest
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm i
+
+# Copy all other source code to work directory
+ADD . /usr/src/app
+
+RUN npm run build-ts
+
+COPY . .
+
+CMD [ "npm", "start" ]
