@@ -1,3 +1,5 @@
+import { logger } from "./log";
+
 export interface IParseResult {
   id: string | number;
   title: string;
@@ -15,6 +17,8 @@ export type OnNewItemsFound = (params: {
   items: IParseResult[];
 }) => Promise<void>;
 
+export type previousParseResults = (string | number)[];
+
 export interface IUserSetParserInfo {
   name: string;
   parserType: EParserType;
@@ -26,15 +30,19 @@ export interface IParserInfo extends IUserSetParserInfo {
   id: number;
 }
 
+export interface IParserInfoWithPreviousResults extends IParserInfo {
+  previousParseResults: previousParseResults;
+}
+
 export abstract class Parser {
   public info?: IParserInfo = undefined;
 
   constructor(params: IParserInfo) {
     this.info = params;
-    console.log("new parser created with info", this.info);
+    logger.info("new parser created with info", this.info);
   }
 
-  previousParseResults: (string | number)[] = [];
+  previousParseResults: previousParseResults = [];
 
   abstract fetchNewResults(
     onNewItemsFound: OnNewItemsFound

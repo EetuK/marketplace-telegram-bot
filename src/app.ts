@@ -25,10 +25,6 @@ bot.command("list", (ctx) => {
   (ctx as any).scene.enter(EWizards.ListParsers);
 });
 
-bot.hears("Delete", (ctx) => {
-  ctx.replyWithMarkdown("JEAAA");
-});
-
 // Start bot
 bot.launch().then(() => {
   console.info(`Bot ${bot.botInfo.username} is up and running`);
