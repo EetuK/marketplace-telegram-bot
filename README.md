@@ -30,3 +30,7 @@ This bot can be deployed pretty much anywhere you like since it's just a Node.js
 2. Create new project with Raspberry Pi [https://www.balena.io/docs/learn/getting-started/raspberrypi3/nodejs/](https://www.balena.io/docs/learn/getting-started/raspberrypi3/nodejs/)
 3. Add environment variables to your project.
 4. Create release to your device by pushing the code to balena using [balena-cli](https://github.com/balena-io/balena-cli) for example.
+
+## License
+
+This project is [licensed under the MIT License](LICENSE).
