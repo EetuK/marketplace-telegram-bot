@@ -39,7 +39,7 @@ export class Tori extends Parser {
     }
 
     // For testing
-    //this.previousParseResults.splice(0, 1);
+    // this.previousParseResults.splice(0, 1);
 
     const newProducts = products.filter(
       (p) => !this.previousParseResults.includes(p.id)

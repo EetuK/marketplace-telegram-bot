@@ -74,6 +74,8 @@ export class Scheduler {
     if (indexToDelete < 0 || indexToDelete > this.parsers.length) {
       return;
     }
+    clearInterval(this.parsers[indexToDelete]?.intervalFunction);
     this.parsers.splice(indexToDelete, 1);
+    logger.info(`Deleted parser id: ${id}`);
   }
 }
